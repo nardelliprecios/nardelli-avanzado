@@ -1,339 +1,45 @@
 <!DOCTYPE html>
-<html lang="es">
+
+<html>
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nardelli: Calidad y Servicio</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1">
 
-<style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background: #111;
-text-align:center;
-color: #fff;
-}
+<title>NARDELLI BUSQUEDA</title>
 
-header{
-background:#c40000;
-padding:12px;
-font-size:24px;
-font-weight:bold;
-text-align:center;
-}
+<link
+rel="stylesheet"
+href="style.css">
 
-main{
-padding:15px;
-max-width:520px;
-margin:auto;
-}
-
-button{
-width:100%;
-padding:16px;
-font-size:22px;
-font-weight:bold;
-border:none;
-border-radius:12px;
-background:#ffd400;
-margin-bottom:15px;
-margin-top:15px;
-}
-
-#reader{
-width:100%;
-background:#fff;
-border-radius:14px;
-overflow:hidden;
-}
-
-.card{
-background:#222;
-padding:18px;
-border-radius:14px;
-margin-top:15px;
-box-shadow:0 4px 10px rgba(0,0,0,.12);
-}
-
-.precio{
-font-size:60px;
-font-weight:bold;
-color: #ffd400;
-margin-top:15px;
-}
-.small{
-font-size:15px;
-margin-top:15px;
-color:#aaa;
-}
-
-.msg{
-font-size:25px;
-color: #fff;
-margin-top:15px;
-}
-
-.barcode{
-font-size:20px;
-color: #ffd400;
-margin-top:15px;
-}
-
-#footer{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:#c40000;
-color:#fff;
-text-align:center;
-padding:12px;
-font-size:24px;
-box-shadow:0 -2px 10px rgba(0,0,0,0.3);
-}
-
-</style>
 </head>
 
 <body>
 
-<header>NARDELLI: Calidad y Servicio</header>
+<div class="container">
 
-<main>
-
-<button onclick="iniciar()">📷 Escanear Producto</button>
-
-<button onclick="mostrarBusqueda()">
-🔍 Buscar por nombre o código
-</button>
-
-<div id="busqueda" style="display:none;">
+<h1>NARDELLI BUSQUEDA</h1>
 
 <input
-id="textoBusqueda"
-type="text"
-placeholder="Ingrese código o descripción"
-style="
-width:100%;
-padding:16px;
-font-size:20px;
-border-radius:12px;
-border:none;
-margin-bottom:10px;
-box-sizing:border-box;
-">
+id="codigo"
+placeholder="Buscar por código interno o barra">
 
-<button onclick="buscarManual()">
-Buscar
-</button>
+<input
+id="nombre"
+placeholder="Buscar por nombre">
+
+<div id="estado"></div>
+
+<div id="resultado"></div>
 
 </div>
 
-<div id="reader"></div>
-
-<div id="busqueda" style="display:none">
-
-<button onclick="buscarTexto()">
-Buscar
-</button>
-
-</div>
-
-<div id="resultado" class="card">
-Esperando escaneo...
-</div>
-
-</main>
-
-<script>
-
-function mostrarBusqueda(){
-
-document.getElementById("reader").innerHTML="";
-
-document.getElementById("busqueda").style.display="block";
-
-document.getElementById("resultado").innerHTML=
-"Ingrese código o descripción";
-
-document.getElementById("textoBusqueda").focus();
-
-}
-
-function buscarManual(){
-
-const texto =
-document.getElementById("textoBusqueda")
-.value
-.trim();
-
-if(!texto){
-return;
-}
-
-buscar(texto);
-
-}
-
-let leyendo = false;
-
-const API="https://script.google.com/macros/s/AKfycbx81plecIUhPbJrbdT4bJwccGL93wa18eVoHbGSUIzbyEbQZvbPC-X-VM2hULlyul5qsw/exec";
-
-let qr;
-
-function iniciar(){
-
-  leyendo = false;
-
-  document.getElementById("reader").innerHTML = "";
-  document.getElementById("resultado").innerHTML="Coloque su código dentro de las marcas";
-
-  qr = new Html5Qrcode("reader");
-
-  qr.start(
-  { facingMode: "environment" },
-  {
-  fps: 10,
-  qrbox: { width: 280, height: 140 },
-  formatsToSupport: [
-  Html5QrcodeSupportedFormats.EAN_13,
-  Html5QrcodeSupportedFormats.EAN_8,
-  Html5QrcodeSupportedFormats.UPC_A,
-  Html5QrcodeSupportedFormats.UPC_E,
-  Html5QrcodeSupportedFormats.CODE_128
-  ]
-  },
-  (codigo) => {
-
-    if (leyendo) return;
-    leyendo = true;
-
-    qr.stop().then(() => {
-
-      buscar(codigo.trim());
-
-    }).catch(err => {
-      console.log("Error al detener cámara:", err);
-      buscar(codigo.trim());
-    });
-
-  },
-  (errorMessage) => {}
-  ).catch(err => {
-  document.getElementById("resultado").innerHTML=
-  "No se pudo abrir cámara";
-  });
-
-}
-
-function buscar(codigo){
-
-  document.getElementById("resultado").innerHTML =
-  "Buscando, por favor aguarde...";
-
-  fetch(API + "?codigo=" + encodeURIComponent(codigo))
-  .then(r => r.text())
-  .then(txt => {
-
-    console.log("Respuesta cruda:", txt);
-
-    let data;
-
-    try {
-      data = JSON.parse(txt);
-    } catch (e) {
-      document.getElementById("resultado").innerHTML =
-        "Error parseando respuesta";
-      return;
-    }
-
-    console.log("JSON parseado:", data);
-
-    if(data.ok){
-
-      document.getElementById("resultado").innerHTML = `
-
-      <div class="barcode">${codigo}</div>
-
-      <div class="msg">${data.nombre}</div>
-
-      <div class="small">Código: ${data.codigo}</div>
-
-      <div class="small">${data.categoria}</div>
-
-      ${data.peso ? `
-      <div class="small">
-      Peso: ${data.peso.toFixed(3)} Kg
-      </div>
-
-      <div class="small">
-      Precio x Kg:
-      $ ${Number(data.precio).toLocaleString('es-AR',{minimumFractionDigits:2})}
-      </div>
-      ` : ``}
-
-      <div class="precio">
-      $ ${Number(data.precioFinal).toLocaleString('es-AR',{minimumFractionDigits:2})}
-      </div>
-
-      <button onclick="reiniciar()">🔄 Escanear otro producto</button>
-      `;
-
-    } else {
-
-      document.getElementById("resultado").innerHTML=`
-      Producto no encontrado
-      <br><br>
-      codigo leído:
-      <br>
-      <div class="barcode"> ${codigo}</div>
-      <button onclick="reiniciar()">🔄 Intentar otro</button>
-      `;
-
-    }
-
-  })
-  .catch(err => {
-
-    console.log("ERROR FETCH:", err);
-
-    document.getElementById("resultado").innerHTML =
-      "Error consultando servidor";
-
-  });
-
-}
-
-function reiniciar(){
-  
-  leyendo = false;
-
-  document.getElementById("reader").innerHTML = "";
-
-  document.getElementById("resultado").innerHTML =
-  "Abriendo cámara...";
-
-  setTimeout(() => {
-    iniciar();
-  }, 300);
-
-}
-
-
-window.onload = function(){
-
-document.getElementById("resultado").innerHTML =
-"Seleccione una opción para comenzar";
-
-};
-
-</script>
-
-<footer id="footer">
-  ¡Gracias por su consulta!
-</footer>
+<script src="app.js"></script>
 
 </body>
+
 </html>
