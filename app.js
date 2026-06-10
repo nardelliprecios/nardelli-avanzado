@@ -1,5 +1,5 @@
 const URL_API =
-"https://script.google.com/macros/s/AKfycbz8o24BYdyjrahYWrpHXyEol444aV22xgv-bAsVVAe8PDSuodJEsq-NJbb0rFyhMdeN/exec";
+"https://script.google.com/macros/s/AKfycbxWck4ukpJXSVt0q1yWlxji9lU54q7xhn3-58Qr130Dou2u3PVrZm-IhECLe2xinM8S/exec";
 
 const codigo =
 document.getElementById(
