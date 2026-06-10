@@ -24,35 +24,35 @@ document.getElementById(
 let timer;
 
 codigo.addEventListener(
-"input",
-()=>{
+"keydown",
+(e)=>{
+
+if(
+e.key==="Enter"
+){
 
 nombre.value="";
 
-clearTimeout(timer);
+buscarCodigo();
 
-timer=
-setTimeout(
-buscarCodigo,
-250
-);
+}
 
 }
 );
 
 nombre.addEventListener(
-"input",
-()=>{
+"keydown",
+(e)=>{
+
+if(
+e.key==="Enter"
+){
 
 codigo.value="";
 
-clearTimeout(timer);
+buscarNombre();
 
-timer=
-setTimeout(
-buscarNombre,
-250
-);
+}
 
 }
 );
