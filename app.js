@@ -65,6 +65,7 @@ codigo.value.trim();
 if(!q){
 
 resultado.innerHTML="";
+estado.innerHTML="";
 
 return;
 
@@ -85,6 +86,7 @@ nombre.value.trim();
 if(!q){
 
 resultado.innerHTML="";
+estado.innerHTML="";
 
 return;
 
