@@ -29,9 +29,30 @@ codigo.addEventListener(
 
 if(
 e.key==="Enter"
+||
+e.key==="Go"
+||
+e.key==="Search"
 ){
 
+e.preventDefault();
+
 nombre.value="";
+
+buscarCodigo();
+
+}
+
+}
+);
+
+codigo.addEventListener(
+"change",
+()=>{
+
+if(
+codigo.value.trim()
+){
 
 buscarCodigo();
 
@@ -46,9 +67,30 @@ nombre.addEventListener(
 
 if(
 e.key==="Enter"
+||
+e.key==="Go"
+||
+e.key==="Search"
 ){
 
+e.preventDefault();
+
 codigo.value="";
+
+buscarNombre();
+
+}
+
+}
+);
+
+nombre.addEventListener(
+"change",
+()=>{
+
+if(
+nombre.value.trim()
+){
 
 buscarNombre();
 
@@ -172,12 +214,25 @@ ${p.codigo}
 
 </div>
 
+${
+p.codigo !== p.coddun14
+?
+
+`
+
 <div class="info">
 
 Barra:
 ${p.coddun14}
 
 </div>
+
+`
+
+:
+
+""
+}
 
 <div class="info">
 
